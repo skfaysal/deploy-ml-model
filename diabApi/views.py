@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import render
 import numpy as np
+import pandas as pd
+from .apps import DiabapiConfig
 
 # Function based view to add numbers
 @api_view(['GET', 'POST']) # A Decorator to define an API function in Django. It's converts  python function into API function
@@ -37,6 +39,35 @@ class Add_Values(APIView):
         response_dict = {"sum": sum}
         return Response(response_dict, status=status.HTTP_201_CREATED)
 
+# Class based view to predict based on diabetes model
+class Deabetes_Model_Predict(APIView):
+    #permission_classes = [IsAuthenticated]
+    def post(self, request, format=None):
+        data_dict = request.data
+
+        keys=[]
+        values=[]
+        for key in data_dict:
+            keys.append(key)
+            values.append(data_dict[key])
+        
+        values_nparray = np.array(values)
+        print(values_nparray)
+ 
+
+        scaler = DiabapiConfig.scaler
+        print(scaler)
+        scaled_data = scaler.transform(values_nparray.reshape(1,-1))
+        print(scaled_data)
+
+        prediction = DiabapiConfig.classifier.predict(scaled_data)
+        print(prediction)
+        if prediction == 1:
+            result = "Diabetes Detected"
+        else:
+             result = "Normal"
+        
+        return Response(result,status=200)
 
 """
 This  response dictionary is then sent back with the Response function 

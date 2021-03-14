@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 import pickle
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -7,7 +9,9 @@ from rest_framework.response import Response
 from django.shortcuts import render
 import numpy as np
 import pandas as pd
+# custom
 from .apps import DiabapiConfig
+from .models import Diabetes
 
 # Function based view to add numbers
 @api_view(['GET', 'POST']) # A Decorator to define an API function in Django. It's converts  python function into API function
@@ -41,7 +45,7 @@ class Add_Values(APIView):
 
 # Class based view to predict based on diabetes model
 class Deabetes_Model_Predict(APIView):
-    #permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def post(self, request, format=None):
         data_dict = request.data
 
@@ -52,20 +56,37 @@ class Deabetes_Model_Predict(APIView):
             values.append(data_dict[key])
         
         values_nparray = np.array(values)
-        print(values_nparray)
+        # print(values_nparray)
  
-
         scaler = DiabapiConfig.scaler
-        print(scaler)
+        # print(scaler)
         scaled_data = scaler.transform(values_nparray.reshape(1,-1))
-        print(scaled_data)
+        # print(scaled_data)
 
         prediction = DiabapiConfig.classifier.predict(scaled_data)
         print(prediction)
         if prediction == 1:
             result = "Diabetes Detected"
         else:
-             result = "Normal"
+             result = "No Diabetics"
+
+        # Add data to db
+        obj = Diabetes()
+        obj.Pregnancies = values[0]
+        obj.Glucose = values[1]
+        obj.BloodPressure = values[2]
+        obj.SkinThickness = values[3]
+        obj.Insulin = values[4]
+        obj.BMI = values[5]
+        obj.DiabetesPedigreeFunction = values[6]
+        obj.Age = values[7]
+        obj.Prediction = result
+        obj.save()
+
+        
+
+
+
         
         return Response(result,status=200)
 

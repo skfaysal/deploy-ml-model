@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication,TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 import pickle
 from rest_framework import status
@@ -45,7 +45,8 @@ class Add_Values(APIView):
 
 # Class based view to predict based on diabetes model
 class Deabetes_Model_Predict(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
     def post(self, request, format=None):
         data_dict = request.data
 

@@ -12,6 +12,7 @@ import pandas as pd
 # custom
 from .apps import DiabapiConfig
 from .models import Diabetes
+from .models import Teacher
 
 # Function based view to add numbers
 @api_view(['GET', 'POST']) # A Decorator to define an API function in Django. It's converts  python function into API function
@@ -83,6 +84,13 @@ class Deabetes_Model_Predict(APIView):
         obj.Age = values[7]
         obj.Prediction = result
         obj.save()
+
+        obj2 = Teacher()
+        obj2.name = "Faysal"
+        obj2.gender = "male"
+        obj2.age = 23
+        
+        obj2.save()
 
         
 

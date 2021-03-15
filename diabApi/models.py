@@ -16,4 +16,6 @@ class Diabetes(models.Model):
 
 class Teacher(models.Model):
     name = models.CharField(max_length=80)
+    gender = models.CharField(max_length=80)
     age = models.IntegerField()
+    

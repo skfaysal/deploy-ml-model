@@ -13,5 +13,7 @@ class Diabetes(models.Model):
     DiabetesPedigreeFunction = models.CharField(max_length=200, blank=True)
     Age = models.CharField(max_length=200, blank=True)
     Prediction = models.CharField(max_length=200, blank=True)
-    
-    
+
+class Teacher(models.Model):
+    name = models.CharField(max_length=80)
+    age = models.IntegerField()
